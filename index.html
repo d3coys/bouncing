@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bouncing Ball Animation</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a sphere
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        let material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        // Add light source
+        const light = new THREE.PointLight(0xFFFFAA, 1, 100);
+        light.position.set(-10, 10, 10);
+        scene.add(light);
+
+        camera.position.z = 5;
+
+        // Variables for bouncing logic
+        let speedX = 0.05;
+        let speedY = 0.05;
+        const colors = [0x0000ff, 0xff0000, 0x00ff00, 0xffff00, 0xff00ff, 0x00ffff];
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Move the sphere
+            sphere.position.x += speedX;
+            sphere.position.y += speedY;
+
+            // Bounce and change color on edge collision
+            if (sphere.position.x >= 4 || sphere.position.x <= -4) {
+                speedX = -speedX;
+                material.color.setHex(colors[Math.floor(Math.random() * colors.length)]);
+            }
+            if (sphere.position.y >= 3 || sphere.position.y <= -3) {
+                speedY = -speedY;
+                material.color.setHex(colors[Math.floor(Math.random() * colors.length)]);
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
